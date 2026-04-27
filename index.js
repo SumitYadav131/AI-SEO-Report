@@ -59,6 +59,5 @@ app.post("/crawl", async (req, res) => {
 
 
 app.listen(PORT || 3000, () => {
-    console.log("Serving is running on port " + PORT)
-    console.log("KEY:", process.env.GEMINI_KEY);
+    console.log("Serving is running on port " + PORT);
 })
