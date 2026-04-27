@@ -57,7 +57,6 @@ app.post("/crawl", async (req, res) => {
     }
 });
 
-
 app.listen(PORT || 3000, () => {
     console.log("Serving is running on port " + PORT);
 })
