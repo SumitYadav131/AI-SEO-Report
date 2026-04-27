@@ -2,10 +2,8 @@ export function analyzeSEO(data) {
     let score = 0;
     const issues = [];
 
-    // -------------------------
     // ON-PAGE SEO (40)
-    // -------------------------
-
+  
     // Title (10)
     if (data.title) {
         if (data.title.length >= 30 && data.title.length <= 60) {
@@ -44,9 +42,7 @@ export function analyzeSEO(data) {
         issues.push("No H2 tags found");
     }
 
-    // -------------------------
     // MEDIA (10)
-    // -------------------------
 
     if (data.images > 0) {
         const altRatio = data.imagesWithoutAlt / data.images;
@@ -62,9 +58,7 @@ export function analyzeSEO(data) {
         }
     }
 
-    // -------------------------
     // LINKS (5)
-    // -------------------------
 
     if (data.links >= 20) {
         score += 5;
@@ -75,9 +69,7 @@ export function analyzeSEO(data) {
         issues.push("Very few links on page");
     }
 
-    // -------------------------
     // BONUS (5) — structure quality
-    // -------------------------
 
     if (data.h2Count >= 5) {
         score += 5;
