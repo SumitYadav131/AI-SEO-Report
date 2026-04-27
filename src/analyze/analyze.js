@@ -3,7 +3,7 @@ export function analyzeSEO(data) {
     const issues = [];
 
     // ON-PAGE SEO (40)
-  
+
     // Title (10)
     if (data.title) {
         if (data.title.length >= 30 && data.title.length <= 60) {
