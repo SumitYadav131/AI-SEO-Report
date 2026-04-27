@@ -15,7 +15,6 @@ export async function crawl(url) {
         });
 
         const $ = cheerio.load(data);
-  
 
         return {
             title: $("title").text().trim(),
