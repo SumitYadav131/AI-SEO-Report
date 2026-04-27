@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SEO Audit Tool</title>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
+}
+
+body {
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  color: #fff;
+}
+
+.container {
+  max-width: 1000px;
+  margin: auto;
+  padding: 30px 20px;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 25px;
+  font-size: 28px;
+}
+
+.search-box {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.search-box input {
+  flex: 1;
+  padding: 14px;
+  border-radius: 10px;
+  border: none;
+  font-size: 16px;
+}
+
+.search-box button {
+  padding: 14px 20px;
+  border-radius: 10px;
+  border: none;
+  background: #22c55e;
+  color: #000;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.search-box button:hover {
+  background: #16a34a;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 15px;
+}
+
+.card {
+  background: #1e293b;
+  padding: 18px;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.card h3 {
+  margin-bottom: 10px;
+  font-size: 16px;
+  color: #94a3b8;
+}
+
+.score {
+  font-size: 36px;
+  font-weight: bold;
+  color: #22c55e;
+}
+
+.bad {
+  color: #f87171;
+}
+
+.good {
+  color: #22c55e;
+}
+
+.section {
+  margin-top: 20px;
+}
+
+ul {
+  margin-left: 15px;
+}
+
+.loading {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 18px;
+}
+
+.report {
+  white-space: pre-wrap;
+  line-height: 1.5;
+  color: #e2e8f0;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <h1>🚀 AI SEO Audit Tool</h1>
+
+  <div class="search-box">
+    <input id="urlInput" type="text" placeholder="Enter website URL" />
+    <button onclick="analyze()">Analyze</button>
+  </div>
+
+  <div id="loading" class="loading"></div>
+
+  <div id="result"></div>
+</div>
+
+<script>
+async function analyze() {
+  const url = document.getElementById("urlInput").value;
+  const resultDiv = document.getElementById("result");
+  const loading = document.getElementById("loading");
+
+  if (!url) {
+    alert("Please enter a URL");
+    return;
+  }
+
+  loading.innerText = "Analyzing website...";
+  resultDiv.innerHTML = "";
+
+  try {
+    const res = await fetch("http://localhost:3000/crawl", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ url, ai: true })
+    });
+
+    const data = await res.json();
+    loading.innerText = "";
+
+    if (!data.success) {
+      resultDiv.innerHTML = `<div class="card bad">${data.error}</div>`;
+      return;
+    }
+
+    const scoreColor = data.analysis.score > 70 ? "good" : "bad";
+
+    resultDiv.innerHTML = `
+      <div class="grid">
+        <div class="card">
+          <h3>SEO Score</h3>
+          <div class="score ${scoreColor}">${data.analysis.score}/100</div>
+        </div>
+
+        <div class="card">
+          <h3>Title</h3>
+          <p>${data.data.title || "N/A"}</p>
+        </div>
+
+        <div class="card">
+          <h3>Meta Description</h3>
+          <p>${data.data.metaDescription || "Missing"}</p>
+        </div>
+
+        <div class="card">
+          <h3>Headings</h3>
+          <p>H1: ${data.data.h1 || "Missing"}</p>
+          <p>H2: ${data.data.h2Count}</p>
+        </div>
+
+        <div class="card">
+          <h3>Images</h3>
+          <p>Total: ${data.data.images}</p>
+          <p>Missing Alt: ${data.data.imagesWithoutAlt}</p>
+        </div>
+
+        <div class="card">
+          <h3>Links</h3>
+          <p>${data.data.links}</p>
+        </div>
+      </div>
+
+      <div class="section card">
+        <h3>⚠️ Issues</h3>
+        <ul>
+          ${data.analysis.issues.map(i => `<li>${i}</li>`).join("")}
+        </ul>
+      </div>
+
+      <div class="section card">
+        <h3>🤖 AI Report</h3>
+        <div class="report">${data.report || "No report generated"}</div>
+      </div>
+    `;
+  } catch (err) {
+    loading.innerText = "";
+    resultDiv.innerHTML = `<div class="card bad">Error: ${err.message}</div>`;
+  }
+}
+</script>
+
+</body>
+</html>
