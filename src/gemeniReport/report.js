@@ -10,7 +10,7 @@ console.log(geminiKey);
 const genAI = new GoogleGenerativeAI(geminiKey);
 
 export async function generateReport(data, analysis) {
-    const model = genAI.getGenerativeModel({ model: "gemini-pro-latest" });
+    const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
 
     const prompt = `
 You are an SEO expert.
