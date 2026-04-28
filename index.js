@@ -91,7 +91,7 @@ app.post("/pagespeed", async (req, res) => {
     }
 });
 
-app.post('/checkbrokenlink', brokenlink)
+app.post('/checkbrokenlink', brokenlink);
 
 app.listen(PORT || 3000, () => {
     console.log("Serving is running on port " + PORT);
