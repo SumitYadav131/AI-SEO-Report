@@ -6,6 +6,7 @@ import { analyzeSEO } from "./src/analyze/analyze.js";
 import { generateReport } from "./src/gemeniReport/report.js";
 import path from "path";
 import { getPageSpeed } from "./src/pagespeed/pagespeed.js";
+import { brokenlink } from "./src/brokenlink/brokenlink.js";
 
 
 dotenv.config();
@@ -89,6 +90,8 @@ app.post("/pagespeed", async (req, res) => {
         });
     }
 });
+
+app.post('/checkbrokenlink', brokenlink)
 
 app.listen(PORT || 3000, () => {
     console.log("Serving is running on port " + PORT);

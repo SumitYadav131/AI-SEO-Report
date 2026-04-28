@@ -1,148 +1,158 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<title>SEO Audit Dashboard</title>
+    <title>SEO Audit Dashboard</title>
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
 
-<style>
-body {
-  background: #0f172a;
-  color: #e2e8f0;
-  font-family: "Inter", sans-serif;
-}
+    <style>
+      body {
+        background: #0f172a;
+        color: #e2e8f0;
+        font-family: "Inter", sans-serif;
+      }
 
-.card {
-  background: #1e293b;
-  border: 1px solid #334155;
-  border-radius: 14px;
-  transition: 0.3s;
-}
+      .card {
+        background: #1e293b;
+        border: 1px solid #334155;
+        border-radius: 14px;
+        transition: 0.3s;
+      }
 
-.card:hover {
-  transform: translateY(-3px);
-}
+      .card:hover {
+        transform: translateY(-3px);
+      }
 
-.section-title {
-  font-size: 12px;
-  color: #94a3b8;
-  margin-bottom: 10px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
+      .section-title {
+        font-size: 12px;
+        color: #94a3b8;
+        margin-bottom: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
 
-.big-score {
-  font-size: 52px;
-  font-weight: 700;
-}
+      .big-score {
+        font-size: 52px;
+        font-weight: 700;
+      }
 
-.good { color: #22c55e; }
-.avg { color: #facc15; }
-.bad { color: #ef4444; }
+      .good {
+        color: #22c55e;
+      }
+      .avg {
+        color: #facc15;
+      }
+      .bad {
+        color: #ef4444;
+      }
 
-.wrap-text {
-  word-break: break-word;
-}
+      .wrap-text {
+        word-break: break-word;
+      }
 
-.report {
-  white-space: pre-wrap;
-  font-size: 13px;
-  line-height: 1.6;
-  color: #cbd5f5;
-}
+      .report {
+        white-space: pre-wrap;
+        font-size: 13px;
+        line-height: 1.6;
+        color: #cbd5f5;
+      }
 
-.progress {
-  height: 6px;
-  background: #334155;
-}
+      .progress {
+        height: 6px;
+        background: #334155;
+      }
 
-.progress-bar {
-  background: linear-gradient(90deg, #22c55e, #4ade80);
-}
+      .progress-bar {
+        background: linear-gradient(90deg, #22c55e, #4ade80);
+      }
 
-input {
-  background: #1e293b !important;
-  border: 1px solid #334155 !important;
-  color: white !important;
-}
+      input {
+        background: #1e293b !important;
+        border: 1px solid #334155 !important;
+        color: white !important;
+      }
 
-input::placeholder {
-  color: #94a3b8;
-}
+      input::placeholder {
+        color: #94a3b8;
+      }
 
-.btn-success {
-  background: #22c55e;
-  border: none;
-}
+      .btn-success {
+        background: #22c55e;
+        border: none;
+      }
 
-.badge-box {
-  background: #0f172a;
-  border: 1px solid #334155;
-  padding: 8px;
-  border-radius: 10px;
-  text-align: center;
-}
-</style>
-</head>
+      .badge-box {
+        background: #0f172a;
+        border: 1px solid #334155;
+        padding: 8px;
+        border-radius: 10px;
+        text-align: center;
+      }
+    </style>
+  </head>
 
-<body>
+  <body>
+    <div class="container py-5">
+      <h3 class="text-center mb-4 fw-bold">🚀 SEO Audit Dashboard</h3>
 
-<div class="container py-5">
+      <!-- INPUT -->
+      <div class="card p-3 mb-4">
+        <div class="input-group">
+          <input
+            id="urlInput"
+            class="form-control"
+            placeholder="Enter website URL"
+          />
+          <button class="btn btn-success" onclick="analyze()">Analyze</button>
+        </div>
+      </div>
 
-  <h3 class="text-center mb-4 fw-bold">🚀 SEO Audit Dashboard</h3>
-
-  <!-- INPUT -->
-  <div class="card p-3 mb-4">
-    <div class="input-group">
-      <input id="urlInput" class="form-control" placeholder="Enter website URL">
-      <button class="btn btn-success" onclick="analyze()">Analyze</button>
+      <div id="loading" class="text-center mb-3 text-warning"></div>
+      <div id="result"></div>
     </div>
-  </div>
 
-  <div id="loading" class="text-center mb-3 text-warning"></div>
-  <div id="result"></div>
+    <script>
+      function getScoreClass(score) {
+        if (score >= 80) return "good";
+        if (score >= 50) return "avg";
+        return "bad";
+      }
 
-</div>
+      async function analyze() {
+        const url = document.getElementById("urlInput").value;
+        const resultDiv = document.getElementById("result");
+        const loading = document.getElementById("loading");
 
-<script>
-function getScoreClass(score) {
-  if (score >= 80) return "good";
-  if (score >= 50) return "avg";
-  return "bad";
-}
+        if (!url) return alert("Enter URL");
 
-async function analyze() {
-  const url = document.getElementById("urlInput").value;
-  const resultDiv = document.getElementById("result");
-  const loading = document.getElementById("loading");
+        loading.innerText = "Analyzing...";
+        resultDiv.innerHTML = "";
 
-  if (!url) return alert("Enter URL");
+        try {
+          const res = await fetch("http://localhost:3000/crawl", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ url, ai: true }),
+          });
 
-  loading.innerText = "Analyzing...";
-  resultDiv.innerHTML = "";
+          const data = await res.json();
+          loading.innerText = "";
 
-  try {
-    const res = await fetch("http://localhost:3000/crawl", {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({ url, ai: true })
-    });
+          if (!data.success) {
+            resultDiv.innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
+            return;
+          }
 
-    const data = await res.json();
-    loading.innerText = "";
+          const score = data.analysis.score;
+          const scoreClass = getScoreClass(score);
 
-    if (!data.success) {
-      resultDiv.innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
-      return;
-    }
-
-    const score = data.analysis.score;
-    const scoreClass = getScoreClass(score);
-
-    resultDiv.innerHTML = `
+          resultDiv.innerHTML = `
 
     <!-- SCORE -->
     <div class="card p-4 mb-4 text-center">
@@ -226,17 +236,17 @@ async function analyze() {
       <!-- ISSUES (ONLY IF EXISTS) -->
       ${
         data.analysis.issues.length > 0
-        ? `
+          ? `
         <div class="col-md-6">
           <div class="card p-3 h-100 border-danger">
             <div class="section-title text-danger">Issues Found</div>
             <ul class="mb-0">
-              ${data.analysis.issues.map(i => `<li>${i}</li>`).join("")}
+              ${data.analysis.issues.map((i) => `<li>${i}</li>`).join("")}
             </ul>
           </div>
         </div>
         `
-        : ""
+          : ""
       }
 
       <!-- REPORT -->
@@ -249,13 +259,11 @@ async function analyze() {
 
     </div>
     `;
-
-  } catch (err) {
-    loading.innerText = "";
-    resultDiv.innerHTML = `<div class="alert alert-danger">Error: ${err.message}</div>`;
-  }
-}
-</script>
-
-</body>
+        } catch (err) {
+          loading.innerText = "";
+          resultDiv.innerHTML = `<div class="alert alert-danger">Error: ${err.message}</div>`;
+        }
+      }
+    </script>
+  </body>
 </html>
