@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SEO Pro Dashboard+</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  display: flex;
+  background: linear-gradient(135deg,#020617,#0f172a);
+  color: #e2e8f0;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 230px;
+  background: rgba(2,6,23,0.9);
+  height: 100vh;
+  padding: 25px;
+  border-right: 1px solid #1e293b;
+}
+
+.sidebar h2 {
+  margin-bottom: 30px;
+  font-size: 22px;
+}
+
+.sidebar a {
+  display: block;
+  padding: 12px;
+  margin-bottom: 10px;
+  color: #94a3b8;
+  text-decoration: none;
+  border-radius: 10px;
+  transition: 0.3s;
+}
+
+.sidebar a:hover {
+  background: #1e293b;
+  color: #fff;
+}
+
+/* Main */
+.main {
+  flex: 1;
+  padding: 25px 35px;
+}
+
+.header {
+  font-size: 24px;
+  margin-bottom: 25px;
+  font-weight: 600;
+}
+
+/* Grid */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+/* Cards */
+.card {
+  background: rgba(2,6,23,0.85);
+  padding: 20px;
+  border-radius: 16px;
+  border: 1px solid #1e293b;
+  backdrop-filter: blur(10px);
+  transition: 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}
+
+/* KPI */
+.kpi {
+  font-size: 30px;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+/* Charts */
+canvas {
+  max-width: 200px;
+  margin: auto;
+}
+
+/* Section */
+.section {
+  margin-top: 30px;
+}
+
+/* Progress Bars */
+.progress {
+  background: #1e293b;
+  height: 8px;
+  border-radius: 10px;
+  margin-top: 8px;
+}
+
+.progress span {
+  display: block;
+  height: 100%;
+  border-radius: 10px;
+}
+
+/* AI Box */
+.ai-box p {
+  margin-bottom: 12px;
+  line-height: 1.6;
+}
+
+.tag {
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  margin-right: 5px;
+}
+
+.red { background:#7f1d1d; }
+.yellow { background:#78350f; }
+.green { background:#064e3b; }
+</style>
+</head>
+
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+  <h2>SEO Pro+</h2>
+  <a href="#">Dashboard</a>
+  <a href="#">Analytics</a>
+  <a href="#">Keywords</a>
+  <a href="#">Backlinks</a>
+  <a href="#">Reports</a>
+  <a href="#">Settings</a>
+</div>
+
+<!-- Main -->
+<div class="main">
+
+  <div class="header">SEO Performance Overview</div>
+
+  <!-- KPI CARDS -->
+  <div class="grid">
+
+    <div class="card">
+      <h3>Total Traffic</h3>
+      <div class="kpi" id="trafficCount">0</div>
+    </div>
+
+    <div class="card">
+      <h3>Keywords Ranked</h3>
+      <div class="kpi" id="keywordCount">0</div>
+    </div>
+
+    <div class="card">
+      <h3>Backlinks</h3>
+      <div class="kpi" id="backlinkCount">0</div>
+    </div>
+
+  </div>
+
+  <!-- DONUTS -->
+  <div class="grid section">
+
+    <div class="card">
+      <h3>SEO Score</h3>
+      <canvas id="seoChart"></canvas>
+    </div>
+
+    <div class="card">
+      <h3>Mobile Score</h3>
+      <canvas id="mobileChart"></canvas>
+    </div>
+
+    <div class="card">
+      <h3>Desktop Score</h3>
+      <canvas id="desktopChart"></canvas>
+    </div>
+
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="grid section">
+
+    <div class="card">
+      <h3>Page Speed</h3>
+      <div class="progress"><span style="width:78%; background:#22c55e;"></span></div>
+    </div>
+
+    <div class="card">
+      <h3>Accessibility</h3>
+      <div class="progress"><span style="width:65%; background:#eab308;"></span></div>
+    </div>
+
+    <div class="card">
+      <h3>Best Practices</h3>
+      <div class="progress"><span style="width:90%; background:#22c55e;"></span></div>
+    </div>
+
+  </div>
+
+  <!-- CHARTS -->
+  <div class="grid section">
+
+    <div class="card">
+      <h3>Core Web Vitals</h3>
+      <canvas id="vitalsChart"></canvas>
+    </div>
+
+    <div class="card">
+      <h3>Traffic Trend</h3>
+      <canvas id="trafficChart"></canvas>
+    </div>
+
+  </div>
+
+  <!-- AI INSIGHTS -->
+  <div class="card section">
+    <h3>AI SEO Insights</h3>
+    <div class="ai-box">
+      <p><span class="tag red">Critical</span> LCP exceeds 2.5s — compress images & use CDN.</p>
+      <p><span class="tag yellow">Warning</span> Mobile usability issues detected.</p>
+      <p><span class="tag green">Good</span> Strong backlink growth improving domain authority.</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* Animated Counter */
+function animate(id, end) {
+  let start = 0;
+  let speed = end / 50;
+  let obj = document.getElementById(id);
+
+  let timer = setInterval(() => {
+    start += speed;
+    if(start >= end) {
+      start = end;
+      clearInterval(timer);
+    }
+    obj.innerText = Math.floor(start);
+  }, 20);
+}
+
+animate("trafficCount", 12540);
+animate("keywordCount", 842);
+animate("backlinkCount", 3120);
+
+/* Donut Charts */
+function donut(id, val, color) {
+  new Chart(document.getElementById(id), {
+    type: 'doughnut',
+    data: {
+      datasets: [{
+        data: [val, 100 - val],
+        backgroundColor: [color, '#1e293b'],
+        borderWidth: 0
+      }]
+    },
+    options: {
+      cutout: '75%',
+      plugins: { legend: { display: false } }
+    }
+  });
+}
+
+donut('seoChart', 88, '#22c55e');
+donut('mobileChart', 70, '#eab308');
+donut('desktopChart', 93, '#22c55e');
+
+/* Bar Chart */
+new Chart(document.getElementById('vitalsChart'), {
+  type: 'bar',
+  data: {
+    labels: ['LCP','FID','CLS'],
+    datasets: [{
+      data: [2.8,110,0.12],
+      backgroundColor: ['#22c55e','#eab308','#ef4444']
+    }]
+  },
+  options: {
+    plugins: { legend: { display: false } }
+  }
+});
+
+/* Line Chart */
+new Chart(document.getElementById('trafficChart'), {
+  type: 'line',
+  data: {
+    labels: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+    datasets: [{
+      data: [150,220,320,280,420,390,540],
+      borderColor: '#38bdf8',
+      tension: 0.4
+    }]
+  },
+  options: {
+    plugins: { legend: { display: false } }
+  }
+});
+</script>
+
+</body>
+</html>

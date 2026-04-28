@@ -5,6 +5,7 @@ import { crawl } from "./src/crawler/crawl.js";
 import { analyzeSEO } from "./src/analyze/analyze.js";
 import { generateReport } from "./src/gemeniReport/report.js";
 import path from "path";
+import { getPageSpeed } from "./src/pagespeed/pagespeed.js";
 
 
 dotenv.config();
@@ -33,6 +34,12 @@ app.post("/crawl", async (req, res) => {
 
         const data = await crawl(url);
         const analysis = await analyzeSEO(data);
+        let pagespeed = null;
+        try {
+            pagespeed = await getPageSpeed(url);
+        } catch (err) {
+            console.log("PageSpeed skipped:", err.message);
+        }
 
         let report = null;
 
@@ -45,7 +52,8 @@ app.post("/crawl", async (req, res) => {
             success: true,
             data,
             analysis,
-            report
+            report,
+            pagespeed
         });
     } catch (error) {
         console.error("Crawl Error:", error);
@@ -53,6 +61,31 @@ app.post("/crawl", async (req, res) => {
         res.status(500).json({
             success: false,
             error: error.message,
+        });
+    }
+});
+
+app.post("/pagespeed", async (req, res) => {
+    try {
+        const { url } = req.body;
+
+        if (!url) {
+            return res.status(400).json({
+                success: false,
+                error: "URL is required",
+            });
+        }
+
+        const data = await getPageSpeed(url);
+
+        res.json({
+            success: true,
+            data,
+        });
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            error: err.message,
         });
     }
 });
