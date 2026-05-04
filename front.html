@@ -10,59 +10,102 @@
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
-
-    <style>
-      body {
-        background: #f8fafc;
-        font-family: "Segoe UI", sans-serif;
-      }
-
-      .card {
-        border-radius: 12px;
-        border: 1px solid #e2e8f0;
-      }
-
-      .section-title {
-        font-size: 13px;
-        color: #64748b;
-        margin-bottom: 8px;
-        font-weight: 600;
-      }
-
-      .big-score {
-        font-size: 48px;
-        font-weight: bold;
-      }
-
-      .good {
-        color: #16a34a;
-      }
-      .avg {
-        color: #f59e0b;
-      }
-      .bad {
-        color: #dc2626;
-      }
-
-      .wrap-text {
-        word-break: break-word;
-      }
-
-      .report {
-        white-space: pre-wrap;
-        font-size: 14px;
-        line-height: 1.6;
-      }
-
-      .progress {
-        height: 6px;
-      }
-    </style>
   </head>
+  <style>
+    body {
+      background: #f1f5f9;
+      font-family: "Inter", sans-serif;
+    }
+
+    h3 {
+      font-weight: 700;
+    }
+
+    .card {
+      border-radius: 14px;
+      border: none;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+    }
+
+    .section-title {
+      font-size: 12px;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .big-score {
+      font-size: 56px;
+      font-weight: 800;
+    }
+
+    .good {
+      color: #22c55e;
+    }
+
+    .avg {
+      color: #f59e0b;
+    }
+
+    .bad {
+      color: #ef4444;
+    }
+
+    .progress {
+      height: 8px;
+      border-radius: 10px;
+    }
+
+    .metric-card {
+      text-align: center;
+      padding: 18px;
+    }
+
+    .metric-card h5 {
+      margin: 0;
+      font-weight: 700;
+    }
+
+    .metric-card span {
+      font-size: 12px;
+      color: #64748b;
+    }
+
+    .badge-soft-danger {
+      background: #fee2e2;
+      color: #dc2626;
+      padding: 5px 10px;
+      border-radius: 8px;
+    }
+
+    .badge-soft-success {
+      background: #dcfce7;
+      color: #16a34a;
+      padding: 5px 10px;
+      border-radius: 8px;
+    }
+
+    .report {
+      white-space: pre-wrap;
+      font-size: 14px;
+      line-height: 1.7;
+      color: #334155;
+    }
+
+    ul.clean-list {
+      padding-left: 18px;
+    }
+
+    ul.clean-list li {
+      margin-bottom: 6px;
+    }
+  </style>
 
   <body>
     <div class="container py-5">
-      <h3 class="text-center mb-4 fw-bold">SEO Audit Dashboard</h3>
+      <h3 class="text-center mb-4 fw-bold">SEO Audit Tool</h3>
 
       <!-- INPUT -->
       <div class="card p-3 mb-4">
@@ -81,6 +124,7 @@
     </div>
 
     <script>
+      const baseurl = "https://ai-seo-report.onrender.com";
       function getScoreClass(score) {
         if (score >= 80) return "good";
         if (score >= 50) return "avg";
@@ -98,7 +142,7 @@
         resultDiv.innerHTML = "";
 
         try {
-          const res = await fetch("http://localhost:3000/crawl", {
+          const res = await fetch(`${baseurl}/crawl`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ url, ai: true }),
@@ -114,42 +158,62 @@
 
           const score = data.analysis.score;
           const scoreClass = getScoreClass(score);
-
           resultDiv.innerHTML = `
 
 <!-- SCORE -->
 <div class="card p-4 mb-4 text-center">
-  <div class="section-title">SEO SCORE</div>
-  <div class="big-score ${scoreClass}">${score}/100</div>
-  <div class="progress mt-2">
+  <div class="section-title">Overall SEO Score</div>
+  <div class="big-score ${scoreClass}">${score}</div>
+  <div class="progress mt-3">
     <div class="progress-bar bg-success" style="width:${score}%"></div>
   </div>
 </div>
 
-<!-- LINK SUMMARY (NEW) -->
-<div class="row g-3 mb-4 text-center">
-  <div class="col-md-3">
+<!-- PERFORMANCE -->
+<div class="row g-4 mb-4">
+  <div class="col-md-6">
     <div class="card p-3">
-      <div class="section-title">Total Links</div>
-      <h5>${data.totalLinks ?? 0}</h5>
+      <div class="section-title">Mobile Performance</div>
+      <p><b>Score:</b> ${data.pagespeed?.mobile?.performance ?? "N/A"}</p>
+      <p><b>LCP:</b> ${data.pagespeed?.mobile?.lcp ?? "-"}</p>
+      <p><b>CLS:</b> ${data.pagespeed?.mobile?.cls ?? "-"}</p>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card p-3">
+      <div class="section-title">Desktop Performance</div>
+      <p><b>Score:</b> ${data.pagespeed?.desktop?.performance ?? "N/A"}</p>
+      <p><b>LCP:</b> ${data.pagespeed?.desktop?.lcp ?? "-"}</p>
+      <p><b>CLS:</b> ${data.pagespeed?.desktop?.cls ?? "-"}</p>
+    </div>
+  </div>
+</div>
+
+<!-- LINK SUMMARY -->
+<div class="row g-3 mb-4">
+  <div class="col-md-3">
+    <div class="card metric-card">
+      <span>Total Links</span>
+      <h5>${data.brokenlink.totalLinks ?? 0}</h5>
     </div>
   </div>
   <div class="col-md-3">
-    <div class="card p-3">
-      <div class="section-title text-success">Healthy</div>
-      <h5 class="text-success">${data.healthyCount ?? 0}</h5>
+    <div class="card metric-card">
+      <span>Healthy</span>
+      <h5 class="text-success">${data.brokenlink.healthyCount ?? 0}</h5>
     </div>
   </div>
   <div class="col-md-3">
-    <div class="card p-3">
-      <div class="section-title text-danger">Broken</div>
-      <h5 class="text-danger">${data.brokenCount ?? 0}</h5>
+    <div class="card metric-card">
+      <span>Broken</span>
+      <h5 class="text-danger">${data.brokenlink.brokenCount ?? 0}</h5>
     </div>
   </div>
   <div class="col-md-3">
-    <div class="card p-3">
-      <div class="section-title text-warning">Warnings</div>
-      <h5 class="text-warning">${data.warningCount ?? 0}</h5>
+    <div class="card metric-card">
+      <span>Warnings</span>
+      <h5 class="text-warning">${data.brokenlinkwarningCount ?? 0}</h5>
     </div>
   </div>
 </div>
@@ -157,12 +221,12 @@
 <!-- MAIN GRID -->
 <div class="row g-4">
 
-  <!-- BASIC -->
+  <!-- BASIC SEO -->
   <div class="col-md-6">
     <div class="card p-3 h-100">
       <div class="section-title">Basic SEO</div>
-      <p class="wrap-text"><b>Title:</b> ${data.data.title || "N/A"}</p>
-      <p class="wrap-text"><b>Description:</b> ${data.data.metaDescription || "Missing"}</p>
+      <p><b>Title:</b> ${data.data.title || "N/A"}</p>
+      <p><b>Description:</b> ${data.data.metaDescription || "Missing"}</p>
       <p><b>H1:</b> ${data.data.h1 || "Missing"}</p>
       <p><b>H2 Count:</b> ${data.data.h2Count}</p>
     </div>
@@ -171,102 +235,45 @@
   <!-- CONTENT -->
   <div class="col-md-6">
     <div class="card p-3 h-100">
-      <div class="section-title">Content</div>
+      <div class="section-title">Content Analysis</div>
       <p><b>Images:</b> ${data.data.images}</p>
       <p><b>Missing ALT:</b> ${data.data.imagesWithoutAlt}</p>
       <p><b>Links:</b> ${data.data.links}</p>
     </div>
   </div>
 
-  <!-- BROKEN LINKS -->
-  ${
-    data.brokenLinks?.length > 0
-      ? `
-  <div class="col-12">
-    <div class="card p-3">
-      <div class="section-title text-danger">
-        Broken Links (${data.brokenLinks.length})
-      </div>
-
-      <div class="table-responsive">
-        <table class="table table-sm table-bordered">
-          <thead class="table-light">
-            <tr>
-              <th>URL</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${data.brokenLinks
-              .map(
-                (link) => `
-              <tr>
-                <td class="wrap-text">
-                  <a href="${link.url}" target="_blank">${link.url}</a>
-                </td>
-                <td class="text-danger fw-bold">${link.status}</td>
-              </tr>
-            `,
-              )
-              .join("")}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-  `
-      : ""
-  }
-
-  <!-- WARNINGS (NEW) -->
-  ${
-    data.warnings?.length > 0
-      ? `
-  <div class="col-12">
-    <div class="card p-3">
-      <div class="section-title text-warning">
-        Warnings (${data.warnings.length})
-      </div>
-
-      <div class="table-responsive">
-        <table class="table table-sm table-bordered">
-          <thead class="table-light">
-            <tr>
-              <th>URL</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${data.warnings
-              .map(
-                (link) => `
-              <tr>
-                <td class="wrap-text">
-                  <a href="${link.url}" target="_blank">${link.url}</a>
-                </td>
-                <td class="text-warning fw-bold">${link.status}</td>
-              </tr>
-            `,
-              )
-              .join("")}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-  `
-      : ""
-  }
-
-  <!-- REPORT -->
+  <!-- ISSUES -->
   <div class="col-md-6">
     <div class="card p-3 h-100">
-      <div class="section-title">AI Report</div>
+      <div class="section-title">Issues</div>
+      ${
+        data.analysis.issues.length === 0
+          ? "<span class='badge-soft-success'>No issues found</span>"
+          : `<ul class="clean-list">${data.analysis.issues
+              .map((i) => `<li>${i}</li>`)
+              .join("")}</ul>`
+      }
+    </div>
+  </div>
+
+  <!-- AI REPORT -->
+  <div class="col-md-6">
+    <div class="card p-3 h-100">
+      <div class="section-title">AI Insights</div>
       <div class="report">${data.report || "No report available"}</div>
     </div>
   </div>
 
 </div>
+
+<!-- BROKEN LINKS -->
+<div class="card p-4 mt-4">
+  <div class="section-title">Broken Links</div>
+  <ul class="clean-list">
+    ${data.brokenlink.brokenLinks.map((ele) => `<li>${ele.url}</li>`).join("")}
+  </ul>
+</div>
+
 `;
         } catch (err) {
           loading.innerText = "";
