@@ -7,6 +7,7 @@ import { generateReport } from "./src/gemeniReport/report.js";
 import path from "path";
 import { getPageSpeed } from "./src/pagespeed/pagespeed.js";
 import { brokenlink, getLinks } from "./src/brokenlink/brokenlink.js";
+import { generateKeywords } from "./src/keyword/keyword.js";
 
 
 
@@ -104,6 +105,8 @@ app.post("/pagespeed", async (req, res) => {
 });
 
 app.post('/checkbrokenlink', brokenlink);
+
+app.post("/generateKeywords", generateKeywords);
 
 app.listen(PORT || 3000, () => {
     console.log("Server is running on port " + PORT);
