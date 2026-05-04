@@ -44,9 +44,9 @@ You are an SEO expert.
 
 Based on this website content, generate:
 
-1. 10 HIGH-RANKING keywords
-2. 10 LONG-TAIL keywords
-3. 5 TRENDING keywords (2025 SEO trends)
+1. 20 HIGH-RANKING keywords
+2. 15 LONG-TAIL keywords
+3. 10 TRENDING keywords (2025 SEO trends)
 
 Content:
 Title: ${title}
