@@ -6,8 +6,7 @@ import { analyzeSEO } from "./src/analyze/analyze.js";
 import { generateReport } from "./src/gemeniReport/report.js";
 import path from "path";
 import { getPageSpeed } from "./src/pagespeed/pagespeed.js";
-import { brokenlink, getLinks } from "./src/brokenlink/brokenlink.js";
-
+import { brokenlink } from "./src/brokenlink/brokenlink.js";
 
 
 dotenv.config();
@@ -36,21 +35,13 @@ app.post("/crawl", async (req, res) => {
 
         const data = await crawl(url);
         const analysis = await analyzeSEO(data);
-
+        
         // pagespeed
         let pagespeed = null;
         try {
             pagespeed = await getPageSpeed(url);
         } catch (err) {
             console.log("PageSpeed skipped:", err.message);
-        }
-
-        // brokenlink
-        let brokenlink = null;
-        try {
-            brokenlink = await getLinks(url);
-        } catch (err) {
-            console.log("Failed fetching links ", err.message);
         }
 
         let report = null;
@@ -65,8 +56,7 @@ app.post("/crawl", async (req, res) => {
             data,
             analysis,
             report,
-            pagespeed,
-            brokenlink
+            pagespeed
         });
     } catch (error) {
         console.error("Crawl Error:", error);
@@ -106,5 +96,5 @@ app.post("/pagespeed", async (req, res) => {
 app.post('/checkbrokenlink', brokenlink);
 
 app.listen(PORT || 3000, () => {
-    console.log("Server is running on port " + PORT);
+    console.log("Serving is running on port " + PORT);
 })

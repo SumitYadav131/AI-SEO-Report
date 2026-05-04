@@ -62,7 +62,7 @@
 
   <body>
     <div class="container py-5">
-      <h3 class="text-center mb-4 fw-bold">SEO Audit Dashboard</h3>
+      <h3 class="text-center mb-4 fw-bold">SEO Audit Tool</h3>
 
       <!-- INPUT -->
       <div class="card p-3 mb-4">
@@ -125,32 +125,9 @@
         <div class="progress-bar bg-success" style="width:${score}%"></div>
       </div>
     </div>
+    <!-- SCORE END -->
 
-    <!-- MAIN GRID -->
-    <div class="row g-4">
-
-      <!-- BASIC -->
-      <div class="col-md-6">
-        <div class="card p-3 h-100">
-          <div class="section-title">Basic SEO</div>
-          <p class="wrap-text"><b>Title:</b> ${data.data.title || "N/A"}</p>
-          <p class="wrap-text"><b>Description:</b> ${data.data.metaDescription || "Missing"}</p>
-          <p><b>H1:</b> ${data.data.h1 || "Missing"}</p>
-          <p><b>H2 Count:</b> ${data.data.h2Count}</p>
-        </div>
-      </div>
-
-      <!-- CONTENT -->
-      <div class="col-md-6">
-        <div class="card p-3 h-100">
-          <div class="section-title">Content</div>
-          <p><b>Images:</b> ${data.data.images}</p>
-          <p><b>Missing ALT:</b> ${data.data.imagesWithoutAlt}</p>
-          <p><b>Links:</b> ${data.data.links}</p>
-        </div>
-      </div>
-
-      <!-- PERFORMANCE -->
+          <!-- PERFORMANCE -->
       <div class="col-12">
         <div class="card p-3">
           <div class="section-title">Performance</div>
@@ -176,6 +153,69 @@
           </div>
         </div>
       </div>
+      <!-- PERFORMANCE END -->
+
+      <!-- LINK SUMMARY (NEW) -->
+<div class="row g-3 mb-4 text-center">
+  <div class="col-md-3">
+    <div class="card p-3">
+      <div class="section-title">Total Links</div>
+      <h5>${data.brokenlink.totalLinks ?? 0}</h5>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card p-3">
+      <div class="section-title text-success">Healthy Links</div>
+      <h5 class="text-success">${data.brokenlink.healthyCount ?? 0}</h5>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card p-3">
+      <div class="section-title text-danger">Broken Links</div>
+      <h5 class="text-danger">${data.brokenlink.brokenCount ?? 0}</h5>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card p-3">
+      <div class="section-title text-warning">Warnings Links</div>
+      <h5 class="text-warning">${data.brokenlinkwarningCount ?? 0}</h5>
+    </div>
+  </div>
+</div>
+<!-- LINK SUMMARY END (NEW) -->
+
+    <!-- BROKEN LINKS -->
+    <div class="card p-4 mb-4 broken-links">${data.brokenlink.brokenLinks.map((ele) => `<li>${ele.url}</li></br>`)}
+      </div>
+    </div>
+    <!-- BROKEN LINKS END -->
+
+
+
+    <!-- MAIN GRID -->
+    <div class="row g-4">
+
+      <!-- BASIC -->
+      <div class="col-md-6">
+        <div class="card p-3 h-100">
+          <div class="section-title">Basic SEO</div>
+          <p class="wrap-text"><b>Title:</b> ${data.data.title || "N/A"}</p>
+          <p class="wrap-text"><b>Description:</b> ${data.data.metaDescription || "Missing"}</p>
+          <p><b>H1:</b> ${data.data.h1 || "Missing"}</p>
+          <p><b>H2 Count:</b> ${data.data.h2Count}</p>
+        </div>
+      </div>
+
+      <!-- CONTENT -->
+      <div class="col-md-6">
+        <div class="card p-3 h-100">
+          <div class="section-title">Content</div>
+          <p><b>Images:</b> ${data.data.images}</p>
+          <p><b>Missing ALT:</b> ${data.data.imagesWithoutAlt}</p>
+          <p><b>Links:</b> ${data.data.links}</p>
+        </div>
+      </div>
+  <!-- MAIN GRID END-->
 
       <!-- ISSUES -->
       <div class="col-md-6">
@@ -188,6 +228,8 @@
           }
         </div>
       </div>
+
+
 
       <!-- REPORT -->
       <div class="col-md-6">

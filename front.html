@@ -13,43 +13,35 @@
 
     <style>
       body {
-        background: #0f172a;
-        color: #e2e8f0;
-        font-family: "Inter", sans-serif;
+        background: #f8fafc;
+        font-family: "Segoe UI", sans-serif;
       }
 
       .card {
-        background: #1e293b;
-        border: 1px solid #334155;
-        border-radius: 14px;
-        transition: 0.3s;
-      }
-
-      .card:hover {
-        transform: translateY(-3px);
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
       }
 
       .section-title {
-        font-size: 12px;
-        color: #94a3b8;
-        margin-bottom: 10px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
+        font-size: 13px;
+        color: #64748b;
+        margin-bottom: 8px;
+        font-weight: 600;
       }
 
       .big-score {
-        font-size: 52px;
-        font-weight: 700;
+        font-size: 48px;
+        font-weight: bold;
       }
 
       .good {
-        color: #22c55e;
+        color: #16a34a;
       }
       .avg {
-        color: #facc15;
+        color: #f59e0b;
       }
       .bad {
-        color: #ef4444;
+        color: #dc2626;
       }
 
       .wrap-text {
@@ -58,48 +50,19 @@
 
       .report {
         white-space: pre-wrap;
-        font-size: 13px;
+        font-size: 14px;
         line-height: 1.6;
-        color: #cbd5f5;
       }
 
       .progress {
         height: 6px;
-        background: #334155;
-      }
-
-      .progress-bar {
-        background: linear-gradient(90deg, #22c55e, #4ade80);
-      }
-
-      input {
-        background: #1e293b !important;
-        border: 1px solid #334155 !important;
-        color: white !important;
-      }
-
-      input::placeholder {
-        color: #94a3b8;
-      }
-
-      .btn-success {
-        background: #22c55e;
-        border: none;
-      }
-
-      .badge-box {
-        background: #0f172a;
-        border: 1px solid #334155;
-        padding: 8px;
-        border-radius: 10px;
-        text-align: center;
       }
     </style>
   </head>
 
   <body>
     <div class="container py-5">
-      <h3 class="text-center mb-4 fw-bold">🚀 SEO Audit Dashboard</h3>
+      <h3 class="text-center mb-4 fw-bold">SEO Audit Dashboard</h3>
 
       <!-- INPUT -->
       <div class="card p-3 mb-4">
@@ -113,7 +76,7 @@
         </div>
       </div>
 
-      <div id="loading" class="text-center mb-3 text-warning"></div>
+      <div id="loading" class="text-center mb-3"></div>
       <div id="result"></div>
     </div>
 
@@ -154,111 +117,157 @@
 
           resultDiv.innerHTML = `
 
-    <!-- SCORE -->
-    <div class="card p-4 mb-4 text-center">
-      <div class="section-title">SEO SCORE</div>
-      <div class="big-score ${scoreClass}">${score}/100</div>
-      <div class="progress mt-3">
-        <div class="progress-bar" style="width:${score}%"></div>
+<!-- SCORE -->
+<div class="card p-4 mb-4 text-center">
+  <div class="section-title">SEO SCORE</div>
+  <div class="big-score ${scoreClass}">${score}/100</div>
+  <div class="progress mt-2">
+    <div class="progress-bar bg-success" style="width:${score}%"></div>
+  </div>
+</div>
+
+<!-- LINK SUMMARY (NEW) -->
+<div class="row g-3 mb-4 text-center">
+  <div class="col-md-3">
+    <div class="card p-3">
+      <div class="section-title">Total Links</div>
+      <h5>${data.totalLinks ?? 0}</h5>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card p-3">
+      <div class="section-title text-success">Healthy</div>
+      <h5 class="text-success">${data.healthyCount ?? 0}</h5>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card p-3">
+      <div class="section-title text-danger">Broken</div>
+      <h5 class="text-danger">${data.brokenCount ?? 0}</h5>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card p-3">
+      <div class="section-title text-warning">Warnings</div>
+      <h5 class="text-warning">${data.warningCount ?? 0}</h5>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN GRID -->
+<div class="row g-4">
+
+  <!-- BASIC -->
+  <div class="col-md-6">
+    <div class="card p-3 h-100">
+      <div class="section-title">Basic SEO</div>
+      <p class="wrap-text"><b>Title:</b> ${data.data.title || "N/A"}</p>
+      <p class="wrap-text"><b>Description:</b> ${data.data.metaDescription || "Missing"}</p>
+      <p><b>H1:</b> ${data.data.h1 || "Missing"}</p>
+      <p><b>H2 Count:</b> ${data.data.h2Count}</p>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="col-md-6">
+    <div class="card p-3 h-100">
+      <div class="section-title">Content</div>
+      <p><b>Images:</b> ${data.data.images}</p>
+      <p><b>Missing ALT:</b> ${data.data.imagesWithoutAlt}</p>
+      <p><b>Links:</b> ${data.data.links}</p>
+    </div>
+  </div>
+
+  <!-- BROKEN LINKS -->
+  ${
+    data.brokenLinks?.length > 0
+      ? `
+  <div class="col-12">
+    <div class="card p-3">
+      <div class="section-title text-danger">
+        Broken Links (${data.brokenLinks.length})
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-sm table-bordered">
+          <thead class="table-light">
+            <tr>
+              <th>URL</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${data.brokenLinks
+              .map(
+                (link) => `
+              <tr>
+                <td class="wrap-text">
+                  <a href="${link.url}" target="_blank">${link.url}</a>
+                </td>
+                <td class="text-danger fw-bold">${link.status}</td>
+              </tr>
+            `,
+              )
+              .join("")}
+          </tbody>
+        </table>
       </div>
     </div>
+  </div>
+  `
+      : ""
+  }
 
-    <!-- GRID -->
-    <div class="row g-4">
-
-      <!-- BASIC -->
-      <div class="col-md-6">
-        <div class="card p-3 h-100">
-          <div class="section-title">Basic SEO</div>
-          <p class="wrap-text"><b>Title:</b> ${data.data.title || "N/A"}</p>
-          <p class="wrap-text"><b>Description:</b> ${data.data.metaDescription || "Missing"}</p>
-          <p><b>H1:</b> ${data.data.h1 || "Missing"}</p>
-          <p><b>H2 Count:</b> ${data.data.h2Count}</p>
-        </div>
+  <!-- WARNINGS (NEW) -->
+  ${
+    data.warnings?.length > 0
+      ? `
+  <div class="col-12">
+    <div class="card p-3">
+      <div class="section-title text-warning">
+        Warnings (${data.warnings.length})
       </div>
 
-      <!-- CONTENT -->
-      <div class="col-md-6">
-        <div class="card p-3 h-100">
-          <div class="section-title">Content</div>
-          <div class="row text-center">
-            <div class="col-4">
-              <div class="badge-box">
-                <div>${data.data.images}</div>
-                <small>Images</small>
-              </div>
-            </div>
-            <div class="col-4">
-              <div class="badge-box">
-                <div>${data.data.imagesWithoutAlt}</div>
-                <small>No ALT</small>
-              </div>
-            </div>
-            <div class="col-4">
-              <div class="badge-box">
-                <div>${data.data.links}</div>
-                <small>Links</small>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div class="table-responsive">
+        <table class="table table-sm table-bordered">
+          <thead class="table-light">
+            <tr>
+              <th>URL</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${data.warnings
+              .map(
+                (link) => `
+              <tr>
+                <td class="wrap-text">
+                  <a href="${link.url}" target="_blank">${link.url}</a>
+                </td>
+                <td class="text-warning fw-bold">${link.status}</td>
+              </tr>
+            `,
+              )
+              .join("")}
+          </tbody>
+        </table>
       </div>
-
-      <!-- PERFORMANCE -->
-      <div class="col-12">
-        <div class="card p-3">
-          <div class="section-title">Performance</div>
-
-          <div class="row g-3">
-
-            <div class="col-md-6">
-              <div class="p-3 rounded border" style="background:#020617;">
-                <h6>📱 Mobile</h6>
-                <p>Score: ${data.pagespeed?.mobile?.performance ?? "N/A"}</p>
-                <p>LCP: ${data.pagespeed?.mobile?.lcp ?? "-"}</p>
-                <p>CLS: ${data.pagespeed?.mobile?.cls ?? "-"}</p>
-              </div>
-            </div>
-
-            <div class="col-md-6">
-              <div class="p-3 rounded border" style="background:#020617;">
-                <h6>💻 Desktop</h6>
-                <p>Score: ${data.pagespeed?.desktop?.performance ?? "N/A"}</p>
-                <p>LCP: ${data.pagespeed?.desktop?.lcp ?? "-"}</p>
-                <p>CLS: ${data.pagespeed?.desktop?.cls ?? "-"}</p>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </div>
-
-      <!-- ISSUES (ONLY IF EXISTS) -->
-      ${
-        data.analysis.issues.length > 0
-          ? `
-        <div class="col-md-6">
-          <div class="card p-3 h-100 border-danger">
-            <div class="section-title text-danger">Issues Found</div>
-            <ul class="mb-0">
-              ${data.analysis.issues.map((i) => `<li>${i}</li>`).join("")}
-            </ul>
-          </div>
-        </div>
-        `
-          : ""
-      }
-
-      <!-- REPORT -->
-      <div class="col-md-${data.analysis.issues.length > 0 ? "6" : "12"}">
-        <div class="card p-3 h-100">
-          <div class="section-title">AI Report</div>
-          <div class="report">${data.report || "No report available"}</div>
-        </div>
-      </div>
-
     </div>
-    `;
+  </div>
+  `
+      : ""
+  }
+
+  <!-- REPORT -->
+  <div class="col-md-6">
+    <div class="card p-3 h-100">
+      <div class="section-title">AI Report</div>
+      <div class="report">${data.report || "No report available"}</div>
+    </div>
+  </div>
+
+</div>
+`;
         } catch (err) {
           loading.innerText = "";
           resultDiv.innerHTML = `<div class="alert alert-danger">Error: ${err.message}</div>`;
