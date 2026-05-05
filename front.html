@@ -124,175 +124,175 @@
     </div>
 
     <script>
-      const baseurl = "https://ai-seo-report.onrender.com";
-      function getScoreClass(score) {
-        if (score >= 80) return "good";
-        if (score >= 50) return "avg";
-        return "bad";
-      }
+            const baseurl = "https://ai-seo-report.onrender.com";
+            function getScoreClass(score) {
+              if (score >= 80) return "good";
+              if (score >= 50) return "avg";
+              return "bad";
+            }
 
-      async function analyze() {
-        const url = document.getElementById("urlInput").value;
-        const resultDiv = document.getElementById("result");
-        const loading = document.getElementById("loading");
+            async function analyze() {
+              const url = document.getElementById("urlInput").value;
+              const resultDiv = document.getElementById("result");
+              const loading = document.getElementById("loading");
 
-        if (!url) return alert("Enter URL");
+              if (!url) return alert("Enter URL");
 
-        loading.innerText = "Analyzing...";
-        resultDiv.innerHTML = "";
+              loading.innerText = "Analyzing...";
+              resultDiv.innerHTML = "";
 
-        try {
-          const res = await fetch(`${baseurl}/crawl`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ url, ai: true }),
-          });
+              try {
+                const res = await fetch(`${baseurl}/crawl`, {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ url, ai: true }),
+                });
 
-          const data = await res.json();
-          loading.innerText = "";
+                const data = await res.json();
+                loading.innerText = "";
 
-          if (!data.success) {
-            resultDiv.innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
-            return;
-          }
+                if (!data.success) {
+                  resultDiv.innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
+                  return;
+                }
 
-          const score = data.analysis.score;
-          const scoreClass = getScoreClass(score);
-          resultDiv.innerHTML = `
+                const score = data.analysis.score;
+                const scoreClass = getScoreClass(score);
+                resultDiv.innerHTML = `
 
-<!-- SCORE -->
-<div class="card p-4 mb-4 text-center">
-  <div class="section-title">Overall SEO Score</div>
-  <div class="big-score ${scoreClass}">${score}</div>
-  <div class="progress mt-3">
-    <div class="progress-bar bg-success" style="width:${score}%"></div>
-  </div>
-</div>
+      <!-- SCORE -->
+      <div class="card p-4 mb-4 text-center">
+        <div class="section-title">Overall SEO Score</div>
+        <div class="big-score ${scoreClass}">${score}</div>
+        <div class="progress mt-3">
+          <div class="progress-bar bg-success" style="width:${score}%"></div>
+        </div>
+      </div>
 
-<!-- PERFORMANCE -->
-<div class="row g-4 mb-4">
-  <div class="col-md-6">
-    <div class="card p-3">
-      <div class="section-title">Mobile Performance</div>
-      <p><b>Score:</b> ${data.pagespeed?.mobile?.performance ?? "N/A"}</p>
-      <p><b>LCP:</b> ${data.pagespeed?.mobile?.lcp ?? "-"}</p>
-      <p><b>CLS:</b> ${data.pagespeed?.mobile?.cls ?? "-"}</p>
-    </div>
-  </div>
+      <!-- PERFORMANCE -->
+      <div class="row g-4 mb-4">
+        <div class="col-md-6">
+          <div class="card p-3">
+            <div class="section-title">Mobile Performance</div>
+            <p><b>Score:</b> ${data.pagespeed?.mobile?.performance ?? "N/A"}</p>
+            <p><b>LCP:</b> ${data.pagespeed?.mobile?.lcp ?? "-"}</p>
+            <p><b>CLS:</b> ${data.pagespeed?.mobile?.cls ?? "-"}</p>
+          </div>
+        </div>
 
-  <div class="col-md-6">
-    <div class="card p-3">
-      <div class="section-title">Desktop Performance</div>
-      <p><b>Score:</b> ${data.pagespeed?.desktop?.performance ?? "N/A"}</p>
-      <p><b>LCP:</b> ${data.pagespeed?.desktop?.lcp ?? "-"}</p>
-      <p><b>CLS:</b> ${data.pagespeed?.desktop?.cls ?? "-"}</p>
-    </div>
-  </div>
-</div>
+        <div class="col-md-6">
+          <div class="card p-3">
+            <div class="section-title">Desktop Performance</div>
+            <p><b>Score:</b> ${data.pagespeed?.desktop?.performance ?? "N/A"}</p>
+            <p><b>LCP:</b> ${data.pagespeed?.desktop?.lcp ?? "-"}</p>
+            <p><b>CLS:</b> ${data.pagespeed?.desktop?.cls ?? "-"}</p>
+          </div>
+        </div>
+      </div>
 
-<!-- LINK SUMMARY -->
-<div class="row g-3 mb-4">
-  <div class="col-md-3">
-    <div class="card metric-card">
-      <span>Total Links</span>
-      <h5>${data.brokenlink.totalLinks ?? 0}</h5>
-    </div>
-  </div>
-  <div class="col-md-3">
-    <div class="card metric-card">
-      <span>Healthy</span>
-      <h5 class="text-success">${data.brokenlink.healthyCount ?? 0}</h5>
-    </div>
-  </div>
-  <div class="col-md-3">
-    <div class="card metric-card">
-      <span>Broken</span>
-      <h5 class="text-danger">${data.brokenlink.brokenCount ?? 0}</h5>
-    </div>
-  </div>
-  <div class="col-md-3">
-    <div class="card metric-card">
-      <span>Warnings</span>
-      <h5 class="text-warning">${data.brokenlinkwarningCount ?? 0}</h5>
-    </div>
-  </div>
-</div>
+      <!-- LINK SUMMARY -->
+      <div class="row g-3 mb-4">
+        <div class="col-md-3">
+          <div class="card metric-card">
+            <span>Total Links</span>
+            <h5>${data.brokenlink.totalLinks ?? 0}</h5>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card metric-card">
+            <span>Healthy</span>
+            <h5 class="text-success">${data.brokenlink.healthyCount ?? 0}</h5>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card metric-card">
+            <span>Broken</span>
+            <h5 class="text-danger">${data.brokenlink.brokenCount ?? 0}</h5>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card metric-card">
+            <span>Warnings</span>
+            <h5 class="text-warning">${data.brokenlinkwarningCount ?? 0}</h5>
+          </div>
+        </div>
+      </div>
 
-<!-- MAIN GRID -->
-<div class="row g-4">
+      <!-- MAIN GRID -->
+      <div class="row g-4">
 
-  <!-- BASIC SEO -->
-  <div class="col-md-6">
-    <div class="card p-3 h-100">
-      <div class="section-title">Basic SEO</div>
-      <p><b>Title:</b> ${data.data.title || "N/A"}</p>
-      <p><b>Description:</b> ${data.data.metaDescription || "Missing"}</p>
-      <p><b>H1:</b> ${data.data.h1 || "Missing"}</p>
-      <p><b>H2 Count:</b> ${data.data.h2Count}</p>
-    </div>
-  </div>
+        <!-- BASIC SEO -->
+        <div class="col-md-6">
+          <div class="card p-3 h-100">
+            <div class="section-title">Basic SEO</div>
+            <p><b>Title:</b> ${data.data.title || "N/A"}</p>
+            <p><b>Description:</b> ${data.data.metaDescription || "Missing"}</p>
+            <p><b>H1:</b> ${data.data.h1 || "Missing"}</p>
+            <p><b>H2 Count:</b> ${data.data.h2Count}</p>
+          </div>
+        </div>
 
-  <!-- CONTENT -->
-  <div class="col-md-6">
-    <div class="card p-3 h-100">
-      <div class="section-title">Content Analysis</div>
-      <p><b>Images:</b> ${data.data.images}</p>
-      <p><b>Missing ALT:</b> ${data.data.imagesWithoutAlt}</p>
-      <p><b>Links:</b> ${data.data.links}</p>
-    </div>
-  </div>
+        <!-- CONTENT -->
+        <div class="col-md-6">
+          <div class="card p-3 h-100">
+            <div class="section-title">Content Analysis</div>
+            <p><b>Images:</b> ${data.data.images}</p>
+            <p><b>Missing ALT:</b> ${data.data.imagesWithoutAlt}</p>
+            <p><b>Links:</b> ${data.data.links}</p>
+          </div>
+        </div>
 
-  <!-- ISSUES -->
-  <div class="col-md-6">
-    <div class="card p-3 h-100">
-      <div class="section-title">Issues</div>
-      ${
-        data.analysis.issues.length === 0
-          ? "<span class='badge-soft-success'>No issues found</span>"
-          : `<ul class="clean-list">${data.analysis.issues
-              .map((i) => `<li>${i}</li>`)
-              .join("")}</ul>`
-      }
-    </div>
-  </div>
+        <!-- ISSUES -->
+        <div class="col-md-6">
+          <div class="card p-3 h-100">
+            <div class="section-title">Issues</div>
+            ${
+              data.analysis.issues.length === 0
+                ? "<span class='badge-soft-success'>No issues found</span>"
+                : `<ul class="clean-list">${data.analysis.issues
+                    .map((i) => `<li>${i}</li>`)
+                    .join("")}</ul>`
+            }
+          </div>
+        </div>
 
-  <!-- AI REPORT -->
-  <div class="col-md-6">
-    <div class="card p-3 h-100">
-      <div class="section-title">AI Insights</div>
-      <div class="report">${data.report || "No report available"}</div>
-    </div>
-  </div>
+        <!-- AI REPORT -->
+        <div class="col-md-6">
+          <div class="card p-3 h-100">
+            <div class="section-title">AI Insights</div>
+            <div class="report">${data.report || "No report available"}</div>
+          </div>
+        </div>
 
-</div>
+      </div>
 
-<!-- BROKEN LINKS -->
-<div class="card p-4 mt-4">
-  <div class="section-title">Broken Links</div>
-  <ul class="clean-list">
-    ${data.brokenlink.brokenLinks.map((ele) => `<li>${ele.url}</li>`).join("")}
-  </ul>
-</div>
-
-
-<!-- Primary Keywords -->
-<div class="card p-4 mt-4">
-  <div class="section-title">Primary Keywords</div>
-  <ul class="clean-list">
-    ${data.keywords.keywords.primary.map((ele) => `<li>${ele}</li>`).join("")}
-  </ul>
-</div>
-
-`;
-
-`;
+      <!-- BROKEN LINKS -->
+      <div class="card p-4 mt-4">
+        <div class="section-title">Broken Links</div>
+        <ul class="clean-list">
+          ${data.brokenlink.brokenLinks.map((ele) => `<li>${ele.url}</li>`).join("")}
+        </ul>
+      </div>
 
 
-        } catch (err) {
-          loading.innerText = "";
-          resultDiv.innerHTML = `<div class="alert alert-danger">Error: ${err.message}</div>`;
-        }
-      }
+      <!-- Primary Keywords -->
+      <div class="card p-4 mt-4">
+        <div class="section-title">Primary Keywords</div>
+        <ul class="clean-list">
+          ${data.keywords.keywords.primary.map((ele) => `<li>${ele}</li>`).join("")}
+        </ul>
+      </div>
+
+      `;
+
+      `;
+
+
+              } catch (err) {
+                loading.innerText = "";
+                resultDiv.innerHTML = `<div class="alert alert-danger">Error: ${err.message}</div>`;
+              }
+            }
     </script>
   </body>
 </html>
