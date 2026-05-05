@@ -7,9 +7,7 @@ import { generateReport } from "./src/gemeniReport/report.js";
 import path from "path";
 import { getPageSpeed } from "./src/pagespeed/pagespeed.js";
 import { brokenlink, getLinks } from "./src/brokenlink/brokenlink.js";
-import { generateKeywords } from "./src/keyword/keyword.js";
-
-
+import { generateKeywords, getKeywords } from "./src/keyword/keyword.js";
 
 dotenv.config();
 
@@ -61,13 +59,16 @@ app.post("/crawl", async (req, res) => {
             report = await generateReport(data, analysis);
         }
 
+        const keywords = await getKeywords(url);
+
         res.json({
             success: true,
             data,
             analysis,
             report,
             pagespeed,
-            brokenlink
+            brokenlink,
+            keywords
         });
     } catch (error) {
         console.error("Crawl Error:", error);
